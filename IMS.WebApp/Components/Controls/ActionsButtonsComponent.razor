@@ -1,0 +1,55 @@
+@typeparam TItem
+@inject NavigationManager Navigation
+<button class="btn btn-info" @onclick="Detail">Detail</button>
+<button class="btn btn-primary" @onclick="Edit">Edit</button>
+<button class="btn btn-danger" @onclick="Delete">Delete</button>
+
+@code {
+    [Parameter]
+    public TItem? Item { get; set; }
+
+    [Parameter] 
+    public EventCallback<TItem> OnDetail { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem> OnEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<TItem> OnDelete { get; set; }
+    [Parameter]
+    public string? EditUrl { get; set; } // URL para redirecionamento de edição
+    
+    private async Task Detail()
+    {
+        if (Item != null)
+        {
+            await OnDetail.InvokeAsync(Item);
+        }
+    } 
+    
+
+    private async Task Edit()
+    {
+        if (Item != null)
+        {
+            if (OnEdit.HasDelegate)
+            {
+                await OnEdit.InvokeAsync(Item);
+            }
+            if (!string.IsNullOrEmpty(EditUrl))
+            {
+                Navigation.NavigateTo(EditUrl);
+            }
+        }
+    }
+
+    private async Task Delete()
+    {
+        if (Item != null)
+        {
+            await OnDelete.InvokeAsync(Item);
+        }
+    }
+    
+    
+}

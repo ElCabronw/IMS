@@ -1,0 +1,73 @@
+@page "/inventories/edit-inventory/{Id:int}"
+
+@inject NavigationManager Navigation
+@inject IInventoriesUseCase InventoriesUseCase
+<PageTitle>Edit Inventory</PageTitle>
+
+<h3>Edit Inventory</h3>
+
+<EditForm  OnValidSubmit="HandleValidSubmit" EditContext="editContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="inventory.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <InputNumber id="price" class="form-control" @bind-Value="inventory.Price" />
+    </div>
+
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <InputNumber id="quantity" class="form-control" @bind-Value="inventory.Quantity" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+@if (errorMessage != null)
+{
+<div class="alert alert-danger">@errorMessage</div>
+}
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    
+    private Inventory inventory = new Inventory();
+    private string? errorMessage;
+    private EditContext? editContext;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            inventory = await InventoriesUseCase.GetInventoryByIdAsync(Id);
+            editContext = new EditContext(inventory); // Initialize EditContext here
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading inventory: {ex.Message}";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await InventoriesUseCase.UpdateInventoryAsync(inventory);
+            Navigation.NavigateTo("/inventories");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error saving inventory: {ex.Message}";
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/inventories");
+    }
+}

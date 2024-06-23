@@ -1,11 +1,17 @@
+using IMS.Plugins.InMemory;
+using IMS.UseCases.Inventories;
+using IMS.UseCases.PluginInterfaces;
 using IMS.WebApp.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents();
 
+builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
+
+builder.Services.AddTransient<IViewInventoriesByNameUseCase, ViewInventoriesByNameUseCase>();
+builder.Services.AddTransient<IInventoriesUseCase, InventoriesUseCase>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,7 +27,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>();
 
 app.Run();

@@ -1,0 +1,42 @@
+@if (this.Inventory is not null)
+{
+    <tr>
+        <td>@Inventory.Id</td>
+        <td>@Inventory.Name</td>
+        <td>@Inventory.Price.ToString("c")</td>
+        <td>@Inventory.Quantity</td>
+        <td>
+           <ActionsButtonsComponent TItem="Inventory" Item="this.Inventory" OnDetail="HandleDetail"  OnDelete="HandleDelete" EditUrl=@EditUrl></ActionsButtonsComponent>
+        </td>
+    </tr>
+}
+
+@code {
+    [Parameter]
+    public Inventory? Inventory { get; set; }
+    
+    private string EditUrl => $"/edit-inventory/{Inventory?.Id}";
+    
+    private async Task HandleDetail(Inventory inventory)
+    {
+        // Lógica de edição
+        
+    }
+
+    private async Task HandleEdit(Inventory inventory)
+    {
+        // Lógica de edição
+        Console.WriteLine($"Edit {inventory.Name}");
+    }
+
+    private async Task HandleDelete(Inventory inventory)
+    {
+        // Lógica de exclusão
+        Console.WriteLine($"Delete {inventory.Name}");
+    }
+    
+    
+    
+    
+}
+}
